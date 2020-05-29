@@ -1,0 +1,20 @@
+[Unit]
+
+Description = SHM (Shared Memory) listener for ss963 board and SPI driver
+After = multi-user.target
+
+[Service]
+
+User=root
+SyslogIdentifier = ss963
+StandardOutput = syslog+console
+StandardError = syslog+console
+EnvironmentFile = /etc/ss963.service.conf
+ExecStart = /usr/sbin/ss963 $PARAM1 $PARAM2 $PARAM3 $PARAM4 $PARAM5
+Type=idle
+
+
+[Install]
+
+WantedBy = multi-user.target
+
