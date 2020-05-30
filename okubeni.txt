@@ -1,7 +1,5 @@
-SystemD servisi (ss963.service) olarak calisan surumdur.
 
 
-3. Port lisanslamasi iptal edildi.
 
 2. SHM_SIZE = 1024 Byte = 8192 portu destekler
 
@@ -11,17 +9,10 @@ SystemD servisi (ss963.service) olarak calisan surumdur.
 	
 HATIRLATMALAR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-- dc.sh kodlari derleyerek /home/pi/bin orjinal konumuna kopyalar ve calistirir.
-
-- GCC tüm fonksiyon ve değişken isimlerini binary'e katıyor.
-
 - ELF binary içindeki stringleri görmek için strings komutu kullanılabilir.
 
-- Servisi durdurmak ve başlatmak için 
-	sudo svc -d /service/driver/
-	sudo svc -u /service/driver/
-	
 - GCC derleme bilgilerini görmek için:
+
 	objdump -s --section .comment driver
 	^
 	driver:     file format elf32-littlearm
