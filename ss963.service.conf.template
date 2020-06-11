@@ -1,5 +1,5 @@
-PARAM1=--port-count=96
-PARAM2=--latch-pin=22
-PARAM3=--latch-delay=0
-PARAM4=--speed=4000000
-PARAM5=--loop-delay-us=100
+PORT_COUNT=96
+LATCH_PIN=22
+LATCH_DELAY=0
+SPEED=4000000
+LOOP_DELAY_US=100
