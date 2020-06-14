@@ -5,11 +5,11 @@ After = multi-user.target
 [Service]
 
 User=root
-SyslogIdentifier = ss963
+SyslogIdentifier = spi-service
 StandardOutput = syslog+console
 StandardError = syslog+console
-EnvironmentFile = /etc/ss963.service.conf
-ExecStart = /usr/sbin/ss963 --port-count=${PORT_COUNT} --latch-pin=${LATCH_PIN} --latch-delay=${LATCH_DELAY} --speed=${SPEED} --loop-delay-us=${LOOP_DELAY_US}
+EnvironmentFile = /etc/spi.service.conf
+ExecStart = /usr/sbin/spiservice --port-count=${PORT_COUNT} --latch-pin=${LATCH_PIN} --latch-delay=${LATCH_DELAY} --speed=${SPEED} --loop-delay-us=${LOOP_DELAY_US}
 Type=idle
 
 
