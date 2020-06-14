@@ -33,4 +33,73 @@ Program uses Gordon's SPI library some parameters as below:
 
 
 # Testing
-spiservice --console-mode --show-updates 
+Below command runs with service at the same time. I suggest firstly stop the service (sudo systemctl stop spi.service)
+
+$ spiservice --console-mode --show-updates 
+
+SPI Port        : 0
+STCP/LATCH pin  : 2 (GPIO/BCM)
+STCP Delay      : 0 uS
+SPI Speed       : 8000000 Hz
+Loop Delay (uS) : 100 uS
+Port Count      : 96
+Board Count     : 1
+SHM_SEGMENT_ID  : 1000146
+SHM Size        : 1024 bytes/8192 ports
+Listening changes for first 12 bytes (96 ports) of SHM...
+To break press ^C
+
+SHM updates listing.
+   0 Hz: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+
+
+
+# Some datasheet data
+
+    74HC595'in frequency characteristic: Maximum clock pulse frequency for SH_CP or ST_CP:
+    Vcc     Min     Typ     Max     Unit
+    2.0     9       30      -       MHz     Typ. T:0,033 uSec = 33nS
+    4.5     30      91      -       MHz
+    6.0     35      108     -       MHz
+    Propagation delay Max. 220nS
+
+    At VDD=15V, ID=4.4A, VGS=10V and RG=6Ω PJA3406's switching limit: 10,75MHz
+        Turn-On Delay Time  3ns
+        Turn-On Rise Time   39ns
+        Turn-Off Delay Time 23ns
+        Turn-Off Fall Time  28ns
+
+
+   =========================================================================
+    RPi Max. SPI Speed 32MHZ
+    Transmitted decimals: 1 2 4 8 16 32 64 128
+    My Clock Test (25.2.17)
+
+     CONFIG             MEAUSURED CLOCK(MHz)            EXEC TIME(uS)
+    ~~~~~~~~    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~    ~~~~~~~~~~~~
+    SPISetup    MOSTLY      Min         Max         SPIDataRW       Data Lost
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    0.1         0.05        0.05        0.05        ~65             0/8
+    0.5*        0.25        0.25        0.25        ~70             0/8
+    1*          0.5         0.5         0.5         ~70             0/8
+    2*          1           1           1           ~70             0/8
+    3           1.455       1.455       1.455       ~100            0/8
+    4*          2           2           2           ~80             0/8
+    5           2.66        2.28        2.66        ~75             0/8
+    6           3.2         2.66        3.2         ~68             0/8
+    7           4           3.2         4           ~65             0/8
+    8*          4           3.2         4           ~62             0/8
+    9           4           4           5.3         ~58             0/8
+    10          4.8         4.8         6           ~60             0/8
+    11          5.33        5.33        8           ~63             0/8
+    12          5.33        5.33        5.33        ~55             0/8
+    13          5.33        5.33        5.33        ~55             0/8
+    14          8           5.33        8           ~52             0/8
+    15          8           5.33        8           ~52             0/8
+    16*         8           6           8           ~55             1/8
+    20          8           5.33        8           ~50             7/8
+    24          4           5.33        4           ~49             7/8
+    32          8           8           12          ~50             0/8
+    40          4           2.6         5.3         ~45             7/8
+    48          3           3           8           ~47             7/8
+
