@@ -1,18 +1,56 @@
-# spi-service
+# Service
 Listens for SHM (Shared Memory) changes to send SHM data to the SPI port and from there to the ss963 driver card.
 This is full configurable SPI listener. If you write to bytes SPI port of RPi at high speed, write it to SHM (shared memory) with any programming language. The SPI service will detect changes and will read modified memory and write it to SPI.0 port.
 
 # Configuration
 Configuration options stored in /etc/spi.service.conf as described below:
 
-PORT_COUNT = This is bit count to write SPI port at the same time. Default 96.
-LATCH_PIN = Optional. If your SPI hardware has latch pin (eq: 75HC595) you can define a GPIO pin. Default GPIO.22.
-LATCH_DELAY = Optional. You can set LATCH signal period as microseconds. Default 0.
-SPEED = SPI port speed as Hz. Default 40000. 
-LOOP_DELAY_US = This is main loop delay. If you high detection speed on SHM you can decrease. Small values increase CPU loar. Default 100uS.
+- PORT_COUNT = This is bit count to write SPI port at the same time. Default 96.
+- LATCH_PIN = Optional. If your SPI hardware has latch pin (eq: 75HC595) you can define a GPIO pin. Default GPIO.22.
+- LATCH_DELAY = Optional. You can set LATCH signal period as microseconds. Default 0.
+- SPEED = SPI port speed as Hz. Default 40000. 
+- LOOP_DELAY_US = This is main loop delay. If you high detection speed on SHM you can decrease. Small values increase CPU loar. Default 100uS.
 
 # Installation
-Just run install script ./install
+pi@raspberrypi:~ $ git clone https://github.com/enseitankado/spi-service.git
+pi@raspberrypi:~ $ cd spi-service/
+pi@raspberrypi:~/spi-service $./install.sh
+
+> Stopping spi.service...
+Failed to stop spi.service: Unit spi.service not loaded.
+Failed to kill unit spi.service: Unit spi.service not loaded.
+> Old binary removed.
+> Compiling from source code...
+> New binary created.
+> Old SystemD unit file removed.
+> Old configuration file removed.
+> New SystemD unit file installing...
+> New configuration file created at /etc/spi.service.conf with default settings.
+Created symlink /etc/systemd/system/multi-user.target.wants/spi.service → /lib/systemd/system/spi.service.
+> The service is spi.service starting...
+
+● spi.service - SHM (Shared Memory) listener for ss963 serial driver board and SPI driver
+   Loaded: loaded (/lib/systemd/system/spi.service; enabled; vendor preset: enabled)
+   Active: active (running) since Sun 2020-06-14 03:59:29 +03; 108ms ago
+ Main PID: 16818 (spiservice)
+    Tasks: 1 (limit: 2200)
+   Memory: 248.0K
+   CGroup: /system.slice/spi.service
+           └─16818 /usr/sbin/spiservice --port-count=96 --latch-pin=2 --latch-delay=0 --speed=4000000 --loop-delay-us=100
+
+Haz 14 03:59:29 raspberrypi spiservice[16818]: SPI Port        : 0
+Haz 14 03:59:29 raspberrypi spiservice[16818]: STCP/LATCH pin  : 2 (GPIO/BCM)
+Haz 14 03:59:29 raspberrypi spiservice[16818]: STCP Delay      : 0 uS
+Haz 14 03:59:29 raspberrypi spiservice[16818]: SPI Speed       : 4000000 Hz
+Haz 14 03:59:29 raspberrypi spiservice[16818]: Loop Delay (uS) : 100 uS
+Haz 14 03:59:29 raspberrypi spiservice[16818]: Port Count      : 96
+Haz 14 03:59:29 raspberrypi spiservice[16818]: Board Count     : 1
+Haz 14 03:59:29 raspberrypi spiservice[16818]: SHM_SEGMENT_ID  : 1000146
+Haz 14 03:59:29 raspberrypi spiservice[16818]: SHM Size        : 1024 bytes/8192 ports
+Haz 14 03:59:29 raspberrypi spiservice[16818]: Listening changes for first 12 bytes (96 ports) of SHM...
+
+Finished.
+
 
 # Notes
 SHM memory key (SHM_SEGMENT_ID) is 1000146 (0x000f42d2). You can read/write SHM with the key in any programming language. Remember: The service listen only (PORT_COUNT/8) byte for changes.
@@ -31,6 +69,39 @@ Program uses Gordon's SPI library some parameters as below:
 
 (ref: projects.drogon.net/understanding-spi-on-the-raspberry-pi)
 
+# Command Line
+pi@raspberrypi:~/spi-service $ spiservice -h
+
+ OPTIONS
+         -c, --console-mode
+                 Used for console mode.
+                 In console mode outputs redirect to console instead of syslog.
+
+         -u, --show-updates
+                 Used in console mode to print out SHM updates.
+                 Printing updates to the console dramatically reduces SPI update speed.
+
+         -s, --speed <value>
+                 SPI communication speed as Hertz (Hz).
+                 Available rates are (as MHz): 0.5,1,2,4,8,16,32.
+                 Default value is 8000000 Hz dir
+
+         -l, --latch-delay <value>
+                 Latch signal width as microsecond.
+                 Default value is 0 uS dir
+
+         -g, --latch-pin <value>
+                 Latch pin number as GPIO/BCM numbering.
+                 Default value is 2
+
+         -p, --port-count <value>
+                 Port count to drive. Port count must be a multiple of 96.
+                 Default value 96
+
+         -d, --loop-delay-us <value>
+                 SHM scanning delay as micro seconds (us).
+                 With small values, SHM is read more often, whereas high CPU usage occurs.
+                 Default value 100
 
 # Testing
 Below command runs with service at the same time. I suggest firstly stop the service (sudo systemctl stop spi.service)
