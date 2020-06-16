@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 	init_wiring_pi();
 
 	// Create shared memory segment (SHM)
-	int shmid = create_shm_segment(SHM_SEGMENT_ID, SHMSZ);
+	int shmid = create_shm_segment(SHM_SEGMENT_KEY, SHMSZ);
 
 	unsigned char buff[SHMSZ];
 	unsigned char buff_old[SHMSZ];
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 		syslog(LOG_INFO, "Loop Delay (uS) : %d uS\n", LOOP_DELAY_US);
 		syslog(LOG_INFO, "Port Count      : %d \n", PORT_COUNT);
 		syslog(LOG_INFO, "Board Count     : %d\n", PORT_COUNT/96);
-		syslog(LOG_INFO, "SHM_SEGMENT_ID  : %d\n", SHM_SEGMENT_ID);
+		syslog(LOG_INFO, "SHM_SEGMENT_KEY : %d\n", SHM_SEGMENT_KEY);
 		syslog(LOG_INFO, "SHM Size        : %d bytes/%d ports\n", SHMSZ, SHMSZ*8);
 		syslog(LOG_WARNING, "Listening changes for first %d bytes (%d ports) of SHM...\n", PORT_COUNT/8, PORT_COUNT);
 	} else {
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 		printf("Loop Delay (uS) : %d uS\n", LOOP_DELAY_US);
 		printf("Port Count      : %d \n", PORT_COUNT);
 		printf("Board Count     : %d\n", PORT_COUNT/96);
-		printf("SHM_SEGMENT_ID  : %d\n", SHM_SEGMENT_ID);
+		printf("SHM_SEGMENT_KEY : %d\n", SHM_SEGMENT_KEY);
 		printf("SHM Size        : %d bytes/%d ports\n", SHMSZ, SHMSZ*8);
 		printf("Listening changes for first %d bytes (%d ports) of SHM...\n", PORT_COUNT/8, PORT_COUNT);
 		printf("To break press ^C\n\n");

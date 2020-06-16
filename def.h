@@ -95,10 +95,17 @@ static int SPI_SPEED = 8 * 1000 * 1000;
 // *Maximum value 4KiBiByte
 static int SHMSZ = 1024;
 
-// SHM segment kimlik numarası.
-// Goruntulemek icin: 	$ipcs -m 
-// Silmek icin: 		$sudo ipcrm -M <key> 
-key_t SHM_SEGMENT_ID = 1000146; //0x000f42d2 (MKA_TCKN)
+/*
+SHM segment KEY
+
+Some SHM inspecting tricks:
+- To list SHM limits: ipcs -l
+- To list SHM segments: ipcs -m
+- Detailed list of segments: ipcs -apct
+- Remove shared memory segment by key: sudo ipcrm -M <KEY>
+- Remove all SHM segments (Warning): sudo ipcrm --all=shm
+*/
+key_t SHM_SEGMENT_KEY = 1000146; //0x000f42d2 (Mustafa Kemal Ataturk's National ID Number)
 
 /*
 Kaynaklar:
