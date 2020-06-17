@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
 			if (SHOW_UPDATES == 1) {
 				f_c++;
 				printf("%4d Hz: ", f_c2);
-				for (i = 0; i < 12; i++)
+				for (i = 0; i < PORT_COUNT; i++)
 					printf(BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(buff[i]));
 
 				printf("\n");
