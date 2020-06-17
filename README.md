@@ -142,8 +142,7 @@ SHM updates listing.
         Turn-Off Delay Time 23ns
         Turn-Off Fall Time  28ns
 
-
-   =========================================================================
+---
     RPi Max. SPI Speed 32MHZ
     Transmitted decimals: 1 2 4 8 16 32 64 128
     My Clock Test (25.2.17)
