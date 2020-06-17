@@ -4,6 +4,10 @@ printf "> Stopping spi.service...\n"
 sudo systemctl stop spi.service
 sudo systemctl kill spi.service
 
+# Kill instances
+printf "> Killing spiservice instances...\n"
+sudo pkill spiservice
+
 # Remove old binary
 sudo rm -rf /usr/sbin/spiservice
 if [ ! -f /usr/sbin/spiservice ]; then

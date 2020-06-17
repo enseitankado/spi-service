@@ -5,29 +5,30 @@ This is full configurable SPI listener. If you write to bytes SPI port of RPi at
 # Configuration
 Configuration options stored in /etc/spi.service.conf as described below:
 
-- PORT_COUNT = This is bit count to write SPI port at the same time. Default 96.
-- LATCH_PIN = Optional. If your SPI hardware has latch pin (eq: 75HC595) you can define a GPIO pin. Default GPIO.22.
-- LATCH_DELAY = Optional. You can set LATCH signal period as microseconds. Default 0.
-- SPEED = SPI port speed as Hz. Default 40000. 
-- LOOP_DELAY_US = This is main loop delay. If you high detection speed on SHM you can decrease. Small values increase CPU loar. Default 100uS.
+- **PORT_COUNT** = This is bit count to write SPI port at the same time. Default 96.
+- **LATCH_PIN** = Optional. If your SPI hardware has latch pin (eq: 75HC595) you can define a GPIO pin. Default GPIO.22.
+- **LATCH_DELAY** = Optional. You can set LATCH signal period as microseconds. Default 0.
+- **SPEED** = SPI port speed as Hz. Default 40000. 
+- **LOOP_DELAY_US** = This is main loop delay. If you high detection speed on SHM you can decrease. Small values increase CPU loar. Default 100uS.
 
 # Installation
+```
 pi@raspberrypi:~ $ git clone https://github.com/enseitankado/spi-service.git
 pi@raspberrypi:~ $ cd spi-service/
 pi@raspberrypi:~/spi-service $./install.sh
 
-> Stopping spi.service...
+Stopping spi.service...
 Failed to stop spi.service: Unit spi.service not loaded.
 Failed to kill unit spi.service: Unit spi.service not loaded.
-> Old binary removed.
-> Compiling from source code...
-> New binary created.
-> Old SystemD unit file removed.
-> Old configuration file removed.
-> New SystemD unit file installing...
-> New configuration file created at /etc/spi.service.conf with default settings.
+Old binary removed.
+Compiling from source code...
+New binary created.
+Old SystemD unit file removed.
+Old configuration file removed.
+New SystemD unit file installing...
+New configuration file created at /etc/spi.service.conf with default settings.
 Created symlink /etc/systemd/system/multi-user.target.wants/spi.service → /lib/systemd/system/spi.service.
-> The service is spi.service starting...
+The service is spi.service starting...
 
 ● spi.service - SHM (Shared Memory) listener for ss963 serial driver board and SPI driver
    Loaded: loaded (/lib/systemd/system/spi.service; enabled; vendor preset: enabled)
@@ -50,7 +51,7 @@ Haz 14 03:59:29 raspberrypi spiservice[16818]: SHM Size        : 1024 bytes/8192
 Haz 14 03:59:29 raspberrypi spiservice[16818]: Listening changes for first 12 bytes (96 ports) of SHM...
 
 Finished.
-
+```
 
 # Notes
 SHM memory key (SHM_SEGMENT_ID) is 1000146 (0x000f42d2). You can read/write SHM with the key in any programming language. Remember: The service listen only (PORT_COUNT/8) byte for changes.
@@ -58,7 +59,7 @@ To list SHM areas: ipcs -lm
 If you want delete SHM key: sudo ipcrm -M <KEY>
 Maz SHM size is as default 1024 (You can drive 8194 port). More than this increase it from def.c
 Program uses Gordon's SPI library some parameters as below:
-
+```
     0.5 MHz
     1 MHz
     2 MHz
@@ -66,10 +67,11 @@ Program uses Gordon's SPI library some parameters as below:
     8 MHz
     16 MHz and
     32 MHz.
-
-(ref: projects.drogon.net/understanding-spi-on-the-raspberry-pi)
+```
+[ref: projects.drogon.net/understanding-spi-on-the-raspberry-pi)](ref: projects.drogon.net/understanding-spi-on-the-raspberry-pi)
 
 # Command Line
+```
 pi@raspberrypi:~/spi-service $ spiservice -h
 
  OPTIONS
@@ -102,10 +104,10 @@ pi@raspberrypi:~/spi-service $ spiservice -h
                  SHM scanning delay as micro seconds (us).
                  With small values, SHM is read more often, whereas high CPU usage occurs.
                  Default value 100
-
+```
 # Testing
 Below command runs with service at the same time. I suggest firstly stop the service (sudo systemctl stop spi.service)
-
+```
 $ spiservice --console-mode --show-updates 
 
 SPI Port        : 0
@@ -122,7 +124,7 @@ To break press ^C
 
 SHM updates listing.
    0 Hz: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-
+```
 
 
 # Some datasheet data
