@@ -61,7 +61,7 @@ static int PORT_COUNT = 96;
 	32			8			8			12			~50				0/8
 	40			4			2.6			5.3			~45				7/8
 	48			3			3			8			~47				7/8
-	
+
 	Gordon's clock dividers for declared frequencies
 	ref: projects.drogon.net/understanding-spi-on-the-raspberry-pi
 	0.5 MHz
@@ -71,7 +71,7 @@ static int PORT_COUNT = 96;
 	8 MHz
 	16 MHz and
 	32 MHz.
-	
+
 */
 static int SPI_PORT = 0;
 static int SPI_SPEED = 8 * 1000 * 1000;
@@ -107,7 +107,20 @@ Some SHM inspecting tricks:
 */
 key_t SHM_SEGMENT_KEY = 1000146; //0x000f42d2 (Mustafa Kemal Ataturk's National ID Number)
 
+
+// for decimal to binary conversion
+#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
+#define BYTE_TO_BINARY(byte)  \
+  (byte & 0x80 ? '1' : '0'), \
+  (byte & 0x40 ? '1' : '0'), \
+  (byte & 0x20 ? '1' : '0'), \
+  (byte & 0x10 ? '1' : '0'), \
+  (byte & 0x08 ? '1' : '0'), \
+  (byte & 0x04 ? '1' : '0'), \
+  (byte & 0x02 ? '1' : '0'), \
+  (byte & 0x01 ? '1' : '0')
+
 /*
-Kaynaklar:
+Resources:
 https://projects.drogon.net/raspberry-pi/wiringpi/spi-library/
 */

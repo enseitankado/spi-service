@@ -21,17 +21,6 @@
 
 clock_t start, end;
 
-#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
-#define BYTE_TO_BINARY(byte)  \
-  (byte & 0x80 ? '1' : '0'), \
-  (byte & 0x40 ? '1' : '0'), \
-  (byte & 0x20 ? '1' : '0'), \
-  (byte & 0x10 ? '1' : '0'), \
-  (byte & 0x08 ? '1' : '0'), \
-  (byte & 0x04 ? '1' : '0'), \
-  (byte & 0x02 ? '1' : '0'), \
-  (byte & 0x01 ? '1' : '0') 
-
 int main(int argc, char *argv[])
 {
 	// Catch termination signal
@@ -63,35 +52,13 @@ int main(int argc, char *argv[])
         	exit(-2);
     	}
 
-	if (SERVICE_MODE) {
-		syslog(LOG_INFO, "SPI Port        : %d\n", SPI_PORT);
-		syslog(LOG_INFO, "STCP/LATCH pin  : %d (GPIO/BCM)\n", STCP_PIN);
-		syslog(LOG_INFO, "STCP Delay      : %d uS\n", STCP_DELAY);
-		syslog(LOG_INFO, "SPI Speed       : %d Hz\n", SPI_SPEED);
-		syslog(LOG_INFO, "Loop Delay (uS) : %d uS\n", LOOP_DELAY_US);
-		syslog(LOG_INFO, "Port Count      : %d \n", PORT_COUNT);
-		syslog(LOG_INFO, "Board Count     : %d\n", PORT_COUNT/96);
-		syslog(LOG_INFO, "SHM_SEGMENT_KEY : %d\n", SHM_SEGMENT_KEY);
-		syslog(LOG_INFO, "SHM Size        : %d bytes/%d ports\n", SHMSZ, SHMSZ*8);
-		syslog(LOG_WARNING, "Listening changes for first %d bytes (%d ports) of SHM...\n", PORT_COUNT/8, PORT_COUNT);
-	} else {
-		printf("SPI Port        : %d\n", SPI_PORT);
-		printf("STCP/LATCH pin  : %d (GPIO/BCM)\n", STCP_PIN);
-		printf("STCP Delay      : %d uS\n", STCP_DELAY);
-		printf("SPI Speed       : %d Hz\n", SPI_SPEED);
-		printf("Loop Delay (uS) : %d uS\n", LOOP_DELAY_US);
-		printf("Port Count      : %d \n", PORT_COUNT);
-		printf("Board Count     : %d\n", PORT_COUNT/96);
-		printf("SHM_SEGMENT_KEY : %d\n", SHM_SEGMENT_KEY);
-		printf("SHM Size        : %d bytes/%d ports\n", SHMSZ, SHMSZ*8);
-		printf("Listening changes for first %d bytes (%d ports) of SHM...\n", PORT_COUNT/8, PORT_COUNT);
-		printf("To break press ^C\n\n");
-	}
+	// if show-updates-enabled print settings header
+	print_current_settings();
 
 	// Showing SHM updates in --console-mode
 	if (SHOW_UPDATES == 1) {
 		start = clock();
-		printf("SHM updates listing.\n");
+		printf("SHM (SHM_SEGMENT_KEY=%d) updates monitoring.\n", SHM_SEGMENT_KEY);
 	}
 
 	// Infinitive loop
@@ -117,9 +84,10 @@ int main(int argc, char *argv[])
 		// if changed then write to the SPI
 		if ( 1 == data_changed)
 		{
+			// show Tx updates
 			if (SHOW_UPDATES == 1) {
 				f_c++;
-				printf("%4d Hz: ", f_c2);
+				printf("Tx (%4d Hz): ", f_c2);
 				for (i = 0; i < PORT_COUNT/8; i++)
 					printf(BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(buff[i]));
 
@@ -133,7 +101,25 @@ int main(int argc, char *argv[])
 
 			// Write to the SPI buff and read-back to the buff
 			wiringPiSPIDataRW(SPI_PORT, buff, shm_read_count);
-			latch(STCP_PIN, STCP_DELAY);
+
+			// Latch functionaliry doesnt used if STCP_PIN is 0
+			if (STCP_PIN != 0)
+				latch(STCP_PIN, STCP_DELAY);
+
+			// show miso input
+            if (SHOW_UPDATES == 1) {
+                f_c++;
+                printf("Rx (%4d Hz): ", f_c2);
+                for (i = 0; i < PORT_COUNT/8; i++)
+                    printf(BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(buff[i]));
+
+                printf("\n");
+                if (((double) (clock() - start) * 1000.0 / CLOCKS_PER_SEC) > 1000/13) {
+                    start = clock();
+                    f_c2 = f_c;
+                    f_c = 0;
+                }
+            }
 		}
 		else
 			usleep(LOOP_DELAY_US);
