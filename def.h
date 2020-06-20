@@ -107,6 +107,8 @@ Some SHM inspecting tricks:
 */
 key_t SHM_SEGMENT_KEY = 1000146; //0x000f42d2 (Mustafa Kemal Ataturk's National ID Number)
 
+// Disable write back of SPI readback data to SHM
+static int DISABLE_SHM_WRITE_BACK = 0;
 
 // for decimal to binary conversion
 #define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"

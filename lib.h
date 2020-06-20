@@ -87,6 +87,10 @@ void print_current_settings()
         syslog(LOG_INFO, "Board Count     : %d\n", PORT_COUNT/96);
         syslog(LOG_INFO, "SHM_SEGMENT_KEY : %d\n", SHM_SEGMENT_KEY);
         syslog(LOG_INFO, "SHM Size        : %d bytes/%d ports\n", SHMSZ, SHMSZ*8);
+		if (DISABLE_SHM_WRITE_BACK == 1)
+			syslog(LOG_INFO, "SHM Writeback   : Disabled\n");
+		else
+			syslog(LOG_INFO, "SHM Writeback   : Enabled\n");
         syslog(LOG_WARNING, "Listening changes for first %d bytes (%d ports) of SHM...\n", PORT_COUNT/8, PORT_COUNT);
     } else {
 
@@ -105,6 +109,11 @@ void print_current_settings()
         printf("Board Count     : %d\n", PORT_COUNT/96);
         printf("SHM_SEGMENT_KEY : %d\n", SHM_SEGMENT_KEY);
         printf("SHM Size        : %d bytes/%d ports\n", SHMSZ, SHMSZ*8);
+        if (DISABLE_SHM_WRITE_BACK == 1)
+	        printf("SHM Writeback   : Disabled\n");
+        else
+            printf("SHM Writeback   : Enabled\n");
+
         printf("Listening changes for first %d bytes (%d ports) of SHM...\n", PORT_COUNT/8, PORT_COUNT);
         printf("To break press ^C\n\n");
     }
@@ -160,6 +169,12 @@ void print_usage()
     printf("\t\t Default value is: %d \n", SHM_SEGMENT_KEY);
     printf("\t\t \n");
 
+    printf("\t -w, --disable-shm-writeback <value>\n");
+    printf("\t\t As a default the SPI readback data written back to SHM.\n");
+    printf("\t\t Disable write back if you want shm data to remain unchanged.\n");
+    printf("\t\t Default value is: %d \n", DISABLE_SHM_WRITE_BACK);
+    printf("\t\t \n");
+
 	exit(EXIT_SUCCESS);
 }
 
@@ -170,22 +185,23 @@ static void get_arguments(int argc, char *argv[])
 	/* Available arguments and parameters */
 	static struct option long_options[] =
 	{
-		{"help", 			no_argument, 		NULL, 	'h'}, // Argumansiz secenek
-		{"console-mode", 	no_argument, 		NULL, 	'c'}, // Argumansiz secenek
-		{"show-updates",  	no_argument, 		NULL, 	'u'}, // Argumansiz secenek
-		{"speed",  			required_argument, 	NULL, 	's'}, // Argumanli secenek
-		{"latch-delay",  	required_argument, 	NULL, 	'l'}, // Argumanli secenek
-		{"latch-pin",  		required_argument, 	NULL, 	'g'}, // Argumanli secenek
-		{"port-count",  	required_argument, 	NULL, 	'p'}, // Argumanli secenek
-		{"loop-delay-us",  	required_argument, 	NULL, 	'd'}, // Argumanli secenek
-		{"shm-segment-key", required_argument,  NULL,   'k'}, // Argumanli secenek
-		{0, 				0, 					0, 		0}
+		{"help", 					no_argument, 		NULL, 	'h'}, // Argumansiz secenek
+		{"console-mode", 			no_argument, 		NULL, 	'c'}, // Argumansiz secenek
+		{"show-updates",  			no_argument, 		NULL, 	'u'}, // Argumansiz secenek
+		{"speed",  					required_argument, 	NULL, 	's'}, // Argumanli secenek
+		{"latch-delay",  			required_argument, 	NULL, 	'l'}, // Argumanli secenek
+		{"latch-pin",  				required_argument, 	NULL, 	'g'}, // Argumanli secenek
+		{"port-count",  			required_argument, 	NULL, 	'p'}, // Argumanli secenek
+		{"loop-delay-us",  			required_argument, 	NULL, 	'd'}, // Argumanli secenek
+		{"shm-segment-key", 		required_argument,  NULL,   'k'}, // Argumanli secenek
+        {"disable-shm-writeback", 	no_argument,  		NULL,   'w'}, // Argumanli secenek
+		{0, 						0, 					0, 		0}
 	};
 
 	/* getopt_long arguman indeksi. */
 	int option_index = 0;
 
-	while ((opt = getopt_long (argc, argv, "hcus:l:g:p:d:k:", long_options, &option_index)) != -1)
+	while ((opt = getopt_long (argc, argv, "hwcus:l:g:p:d:k:", long_options, &option_index)) != -1)
 	{
 		/* Secenekleri parselle */
 		switch (opt)
@@ -213,6 +229,9 @@ static void get_arguments(int argc, char *argv[])
 				break;
 			case 'k':
 				SHM_SEGMENT_KEY = atoi(optarg);
+				break;
+			case 'w':
+				DISABLE_SHM_WRITE_BACK = 1;
 				break;
 			case 'h':
 				print_usage();

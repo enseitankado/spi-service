@@ -37,9 +37,9 @@ int main(int argc, char *argv[])
 
 	unsigned char buff[SHMSZ];
 	unsigned char buff_old[SHMSZ];
-	unsigned char ro_buff[SHMSZ]; // Readonly buffer. wiringPiSPIDataRW reads MISO into readonly (ro) bufferr.
-	char *shm, *s;
-	clock_t start, end;
+	unsigned char ro_buff[SHMSZ]; 	// Readonly buffer. wiringPiSPIDataRW reads MISO into readonly (ro) bufferr.
+	char *shm, *s; 					// shm pointers
+	clock_t start, end;				// reporting of updates freq.
 	int i, f_c=0, f_c2=0, data_changed, shm_read_count = PORT_COUNT / 8;
 
 	// Can read SHM segment
@@ -72,8 +72,7 @@ int main(int argc, char *argv[])
 		data_changed = 0;
 
 		// Compare buffers
-		for (s = shm; i < shm_read_count; s++)
-		{
+		for (s = shm; i < shm_read_count; s++) {
 			buff[i] = *s;
 			ro_buff[i] = buff[i];
 			if (ro_buff[i] != buff_old[i])
@@ -102,11 +101,18 @@ int main(int argc, char *argv[])
 			// Write to the SPI buff and read-back to the buff
 			wiringPiSPIDataRW(SPI_PORT, buff, shm_read_count);
 
+			// write back to shm
+			if (DISABLE_SHM_WRITE_BACK == 0)
+	        for (s = shm; i < shm_read_count; s++) {
+            	*s = buff[i];
+            	i++;
+	        }
+
 			// Latch functionaliry doesnt used if STCP_PIN is 0
 			if (STCP_PIN != 0)
 				latch(STCP_PIN, STCP_DELAY);
 
-			// show miso input
+			// show miso input/rx updates
             if (SHOW_UPDATES == 1) {
                 f_c++;
                 printf("Rx (%4d Hz): ", f_c2);
