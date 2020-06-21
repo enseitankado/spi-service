@@ -170,9 +170,8 @@ void print_usage()
     printf("\t\t \n");
 
     printf("\t -w, --disable-shm-writeback <value>\n");
-    printf("\t\t As a default the SPI readback data written back to SHM.\n");
-    printf("\t\t Disable write back if you want shm data to remain unchanged.\n");
-    printf("\t\t Default value is: %d \n", DISABLE_SHM_WRITE_BACK);
+    printf("\t\t As a default the SPI readback data written back to the SHM.\n");
+    printf("\t\t Use this key to disable write back if you want shm data to remain unchanged.\n");
     printf("\t\t \n");
 
 	exit(EXIT_SUCCESS);
