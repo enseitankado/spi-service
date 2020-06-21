@@ -3,17 +3,14 @@ Description = SHM (Shared Memory) listener for ss963 serial driver board and SPI
 After = multi-user.target
 
 [Service]
-
 User=root
 SyslogIdentifier = spi-service
 StandardOutput = syslog+console
 StandardError = syslog+console
 EnvironmentFile = /etc/spi.service.conf
-ExecStart = /usr/sbin/spiservice --port-count=${PORT_COUNT} --latch-pin=${LATCH_PIN} --latch-delay=${LATCH_DELAY} --speed=${SPEED} --loop-delay-us=${LOOP_DELAY_US}
+ExecStart = /usr/sbin/spiservice --port-count=${PORT_COUNT} --latch-pin=${LATCH_PIN} --latch-delay=${LATCH_DELAY} --speed=${SPEED} --loop-delay-us=${LOOP_DELAY_US} --shm-segment-key={$SHM_SEGMENT_KEY} --disable-shm-writeback={$DISABLE_SHM_WRITE_BACK}
 Type=idle
 
-
 [Install]
-
 WantedBy = multi-user.target
 

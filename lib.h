@@ -172,6 +172,8 @@ void print_usage()
     printf("\t -w, --disable-shm-writeback <value>\n");
     printf("\t\t As a default the SPI readback data written back to the SHM.\n");
     printf("\t\t Use this key to disable write back if you want shm data to remain unchanged.\n");
+	printf("\t\t You can give a value other than 0 to enable this key.\n");
+	printf("\t\t Default value is: %d \n", SHM_SEGMENT_KEY); 
     printf("\t\t \n");
 
 	exit(EXIT_SUCCESS);
@@ -193,14 +195,14 @@ static void get_arguments(int argc, char *argv[])
 		{"port-count",  			required_argument, 	NULL, 	'p'}, // Argumanli secenek
 		{"loop-delay-us",  			required_argument, 	NULL, 	'd'}, // Argumanli secenek
 		{"shm-segment-key", 		required_argument,  NULL,   'k'}, // Argumanli secenek
-        {"disable-shm-writeback", 	no_argument,  		NULL,   'w'}, // Argumanli secenek
+        {"disable-shm-writeback", 	required_argument,	NULL,   'w'}, // Argumanli secenek
 		{0, 						0, 					0, 		0}
 	};
 
 	/* getopt_long arguman indeksi. */
 	int option_index = 0;
 
-	while ((opt = getopt_long (argc, argv, "hwcus:l:g:p:d:k:", long_options, &option_index)) != -1)
+	while ((opt = getopt_long (argc, argv, "hcus:l:g:p:d:k:w:", long_options, &option_index)) != -1)
 	{
 		/* Secenekleri parselle */
 		switch (opt)
@@ -230,7 +232,8 @@ static void get_arguments(int argc, char *argv[])
 				SHM_SEGMENT_KEY = atoi(optarg);
 				break;
 			case 'w':
-				DISABLE_SHM_WRITE_BACK = 1;
+				if (atoi(optarg) != 0)
+					DISABLE_SHM_WRITE_BACK = 1;
 				break;
 			case 'h':
 				print_usage();
