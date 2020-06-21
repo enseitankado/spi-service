@@ -85,7 +85,7 @@ void print_current_settings()
         syslog(LOG_INFO, "Loop Delay (uS) : %d uS\n", LOOP_DELAY_US);
         syslog(LOG_INFO, "Port Count      : %d \n", PORT_COUNT);
         syslog(LOG_INFO, "Board Count     : %d\n", PORT_COUNT/96);
-        syslog(LOG_INFO, "SHM_SEGMENT_KEY : %d\n", SHM_SEGMENT_KEY);
+        syslog(LOG_INFO, "SHM Segment Key : %d\n", SHM_SEGMENT_KEY);
         syslog(LOG_INFO, "SHM Size        : %d bytes/%d ports\n", SHMSZ, SHMSZ*8);
 		if (DISABLE_SHM_WRITE_BACK == 1)
 			syslog(LOG_INFO, "SHM Writeback   : Disabled\n");
@@ -107,7 +107,7 @@ void print_current_settings()
         printf("Loop Delay (uS) : %d uS\n", LOOP_DELAY_US);
         printf("Port Count      : %d \n", PORT_COUNT);
         printf("Board Count     : %d\n", PORT_COUNT/96);
-        printf("SHM_SEGMENT_KEY : %d\n", SHM_SEGMENT_KEY);
+        printf("SHM Segment Key : %d\n", SHM_SEGMENT_KEY);
         printf("SHM Size        : %d bytes/%d ports\n", SHMSZ, SHMSZ*8);
         if (DISABLE_SHM_WRITE_BACK == 1)
 	        printf("SHM Writeback   : Disabled\n");
