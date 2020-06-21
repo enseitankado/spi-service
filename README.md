@@ -59,7 +59,7 @@ Haz 14 03:59:29 raspberrypi spiservice[16818]: Listening changes for first 12 by
 Finished.
 ```
 
-#Uninstall 
+# Uninstall 
 Simply run unistall.sh 
 
 ```
@@ -203,7 +203,7 @@ Rx (   0 Hz): 000000000000000000000000000000000000000000000010000000000000000000
     40          4           2.6         5.3         ~45             7/8
     48          3           3           8           ~47             7/8
 
-#Latch Function
+# About Latch Function
 
 If your device at the end of the SPI port has a Latch control, you can configure 
 the spi service accordingly. The service sends the data of each SHM update to 
@@ -216,5 +216,5 @@ the card. Latch function is normally not enabled. However, if a GPIO pin is
 assigned for the latch function, the service applies the latch signal for 
 the STCP delay time.
 
-![SS963 Serial Driver Card](diagrams/ss963_diagram)
+![SS963 Serial Driver Card](diagrams/ss963_diagram.png)
 [More info about SS963](http://www.izlencebilisim.com/urun/ss963-seri-surucu-karti/2/)
