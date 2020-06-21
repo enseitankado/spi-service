@@ -1,6 +1,12 @@
 # Service
-Listens for SHM (Shared Memory) changes to send SHM data to the SPI port and from there to the ss963 driver card.
-This is full configurable SPI listener. If you write to bytes SPI port of RPi at high speed, write it to SHM (shared memory) with any programming language. The SPI service will detect changes and will read modified memory and write it to SPI.0 port.
+Listens for SHM (Shared Memory) changes to send SHM data to the SPI port and 
+from there to the your SPI devices's MISO. This is full configurable SPI listener. 
+If want to write bytes to SPI port of RPi at high speed, write it to SHM (shared memory) 
+with any programming language. The SPI service will detect changes and will read the 
+modified memory (SHM) and write it to SPI.0 port. It will then write back the bytes 
+returned from the device to SHM due to the nature of the SPI.
+
+![Animated SPI communitaciton ](diagrams/spi_animated.gif)
 
 # Configuration
 Configuration options stored in /etc/spi.service.conf as described below:
@@ -53,11 +59,19 @@ Haz 14 03:59:29 raspberrypi spiservice[16818]: Listening changes for first 12 by
 Finished.
 ```
 
+#Uninstall 
+Simply run unistall.sh 
+
+```
+pi@raspberrypi:~ $ ./sp-service/uninstall.sh
+```
+
 # Notes
 SHM memory key (SHM_SEGMENT_ID) is 1000146 (0x000f42d2). You can read/write SHM with the key in any programming language. Remember: The service listen only (PORT_COUNT/8) byte for changes.
-To list SHM areas: ipcs -lm
-If you want delete SHM key: sudo ipcrm -M <KEY>
-Maz SHM size is as default 1024 (You can drive 8194 port). More than this increase it from def.c
+- To list SHM areas: ipcs -lm
+- If you want delete SHM key: sudo ipcrm -M <KEY>
+Maz SHM size is as default 1024 (You can drive 8194 port with it). 
+Otherwise you can change this from def.c and run install.sh
 Program uses Gordon's SPI library some parameters as below:
 ```
     0.5 MHz
@@ -73,37 +87,48 @@ Program uses Gordon's SPI library some parameters as below:
 # Command Line
 ```
 pi@raspberrypi:~/spi-service $ spiservice -h
-
  OPTIONS
          -c, --console-mode
-                 Used for console mode.
-                 In console mode outputs redirect to console instead of syslog.
+                 Enable console mode.
+                 In console mode the outputs redirected to console instead of syslog.
 
          -u, --show-updates
                  Used in console mode to print out SHM updates.
                  Printing updates to the console dramatically reduces SPI update speed.
+                 Because of terminal screen refreshing very slow according to SPI peripheral.
 
          -s, --speed <value>
                  SPI communication speed as Hertz (Hz).
                  Available rates are (as MHz): 0.5,1,2,4,8,16,32.
-                 Default value is 8000000 Hz dir
+                 Default value is: 8000000 Hz
 
          -l, --latch-delay <value>
                  Latch signal width as microsecond.
-                 Default value is 0 uS dir
+                 Default value is: 0 uS
 
          -g, --latch-pin <value>
                  Latch pin number as GPIO/BCM numbering.
-                 Default value is 2
+                 Default value is: 2
 
          -p, --port-count <value>
                  Port count to drive. Port count must be a multiple of 96.
-                 Default value 96
+                 Default value is: 96
 
          -d, --loop-delay-us <value>
                  SHM scanning delay as micro seconds (us).
                  With small values, SHM is read more often, whereas high CPU usage occurs.
-                 Default value 100
+                 Default value is: 100
+
+         -k, --shm-segment-key <value>
+                 Key value of shm memory to monitor.
+                 Key value must be decimal.
+                 The data read back to the spi buffer is also written back to the SHM memory.            Default value is: 1000146
+
+         -w, --disable-shm-writeback <value>
+                 As a default the SPI readback data written back to SHM.
+                 Disable write back if you want shm data to remain unchanged.
+                 Default value is: 0
+
 ```
 # Testing
 Below command runs with service at the same time. I suggest firstly stop the service (sudo systemctl stop spi.service)
@@ -117,17 +142,20 @@ SPI Speed       : 8000000 Hz
 Loop Delay (uS) : 100 uS
 Port Count      : 96
 Board Count     : 1
-SHM_SEGMENT_ID  : 1000146
+SHM_SEGMENT_KEY : 1000146
 SHM Size        : 1024 bytes/8192 ports
+SHM Writeback   : Enabled
 Listening changes for first 12 bytes (96 ports) of SHM...
 To break press ^C
 
-SHM updates listing.
-   0 Hz: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+SHM (SHM_SEGMENT_KEY=1000146) updates monitoring.
+Tx (   0 Hz): 000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000
+Rx (   0 Hz): 000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000
+
 ```
 
 
-# Some datasheet data
+# Some datasheet
 
     74HC595'in frequency characteristic: Maximum clock pulse frequency for SH_CP or ST_CP:
     Vcc     Min     Typ     Max     Unit
@@ -175,3 +203,18 @@ SHM updates listing.
     40          4           2.6         5.3         ~45             7/8
     48          3           3           8           ~47             7/8
 
+#Latch Function
+
+If your device at the end of the SPI port has a Latch control, you can configure 
+the spi service accordingly. The service sends the data of each SHM update to 
+the device and can activate the latch line for the desired time. 
+The pin and latch time to provide the latch function can be set via 
+the configuration file. The connection diagram of a driver card with the 
+visual latch function below appears. SPI service activates the latch pin 
+after writing the bits to the card, and the bits are reflected in the outputs of 
+the card. Latch function is normally not enabled. However, if a GPIO pin is 
+assigned for the latch function, the service applies the latch signal for 
+the STCP delay time.
+
+![SS963 Serial Driver Card](diagrams/ss963_diagram)
+[More info about SS963](http://www.izlencebilisim.com/urun/ss963-seri-surucu-karti/2/)

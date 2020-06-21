@@ -141,15 +141,15 @@ void print_usage()
 	printf("\t\t Default value is: %d Hz\n", SPI_SPEED);
 	printf("\t\t \n");
 
-	printf("\t -l, --latch-delay <value>\n");
-	printf("\t\t Latch signal width as microsecond.\n");
-	printf("\t\t Default value is: %d uS\n", STCP_DELAY);
-	printf("\t\t \n");
-
 	printf("\t -g, --latch-pin <value>\n");
 	printf("\t\t Latch pin number as GPIO/BCM numbering.\n");
-	printf("\t\t Default value is: %d \n", STCP_PIN);
+	printf("\t\t Default value is: %d and disabled.\n", STCP_PIN);
 	printf("\t\t \n");
+
+    printf("\t -l, --latch-delay <value>\n");
+    printf("\t\t Latch signal width as microsecond.\n");
+    printf("\t\t Default value is: %d uS\n", STCP_DELAY);
+    printf("\t\t \n");
 
 	printf("\t -p, --port-count <value>\n");
 	printf("\t\t Port count to drive. Port count must be a multiple of 96.\n");

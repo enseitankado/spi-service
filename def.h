@@ -8,7 +8,8 @@ static int SHOW_UPDATES = 0;
 static int SERVICE_MODE = 1;
 
 // Which gpio output is connected to the Latch pin of ss963 board. GPIO/BCM numbering is used.
-static int STCP_PIN = 2;
+// Default 0 and disabled
+static int STCP_PIN = 0;
 
 // Default Latch signal width (uS).
 static int STCP_DELAY = 0;
