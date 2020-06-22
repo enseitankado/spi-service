@@ -72,19 +72,41 @@ SHM memory key (SHM_SEGMENT_ID) is 1000146 (0x000f42d2). You can read/write SHM 
 - If you want delete SHM key: sudo ipcrm -M <KEY>
 Maz SHM size is as default 1024 (You can drive 8194 port with it). 
 Otherwise you can change this from def.c and run install.sh
-Program uses Gordon's SPI library some parameters as below:
+
+The driver supports the following speeds:
 ```
-    0.5 MHz
-    1 MHz
-    2 MHz
-    4 MHz
-    8 MHz
-    16 MHz and
-    32 MHz.
+  cdiv    speed
+     2    125.0 MHz
+     4     62.5 MHz
+     8     31.2 MHz
+    16     15.6 MHz
+    32      7.8 MHz
+    64      3.9 MHz
+   128     1953 kHz
+   256      976 kHz
+   512      488 kHz
+  1024      244 kHz
+  2048      122 kHz
+  4096       61 kHz
+  8192     30.5 kHz
+ 16384     15.2 kHz
+ 32768     7629 Hz
 ```
-[ref: projects.drogon.net/understanding-spi-on-the-raspberry-pi)](ref: projects.drogon.net/understanding-spi-on-the-raspberry-pi)
+When asking for say 24 MHz, the actual speed will be 15.6 MHz.
+
+[ref: projects.drogon.net/understanding-spi-on-the-raspberry-pi)](http://projects.drogon.net/understanding-spi-on-the-raspberry-pi)
+[ref: www.raspberrypi.org/documentation/hardware/raspberrypi/spi/README.md](https://www.raspberrypi.org/documentation/hardware/raspberrypi/spi/README.md)
 
 # Command Line
+
+You can also use spiservice as a command line tool while running service. 
+However, I recommend that you stop the service with the 
+`sudo systemctl stop spi.service` command to avoid logical confusion. 
+When using the spiservice tool from the command line, configuration in 
+`/etc/spi.service.conf` will be ommited.
+You must use its own option for each setting as parameter.
+You can give the parameters `-h` or `--help` to see the options.
+
 ```
 pi@raspberrypi:~/spi-service $ spiservice -h
  OPTIONS
@@ -102,13 +124,13 @@ pi@raspberrypi:~/spi-service $ spiservice -h
                  Available rates are (as MHz): 0.5,1,2,4,8,16,32.
                  Default value is: 8000000 Hz
 
+         -g, --latch-pin <value>
+                 Latch pin number as GPIO/BCM numbering.
+                 Default value is: 0 and disabled.
+
          -l, --latch-delay <value>
                  Latch signal width as microsecond.
                  Default value is: 0 uS
-
-         -g, --latch-pin <value>
-                 Latch pin number as GPIO/BCM numbering.
-                 Default value is: 2
 
          -p, --port-count <value>
                  Port count to drive. Port count must be a multiple of 96.
@@ -122,12 +144,14 @@ pi@raspberrypi:~/spi-service $ spiservice -h
          -k, --shm-segment-key <value>
                  Key value of shm memory to monitor.
                  Key value must be decimal.
-                 The data read back to the spi buffer is also written back to the SHM memory.            Default value is: 1000146
+                 The data read back to the spi buffer is also written back to the SHM memory.
+                 Default value is: 1000146
 
          -w, --disable-shm-writeback <value>
-                 As a default the SPI readback data written back to SHM.
-                 Disable write back if you want shm data to remain unchanged.
-                 Default value is: 0
+                 As a default the SPI readback data written back to the SHM.
+                 Use this key to disable write back if you want shm data to remain unchanged.
+                 You can give a value other than 0 to enable this key.
+                 Default value is: 1000146
 
 ```
 # Testing

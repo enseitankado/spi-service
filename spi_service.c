@@ -87,8 +87,10 @@ int main(int argc, char *argv[])
 			if (SHOW_UPDATES == 1) {
 				f_c++;
 				printf("Tx (%4d Hz): ", f_c2);
-				for (i = 0; i < PORT_COUNT/8; i++)
+				for (i = 0; i < PORT_COUNT/8; i++) {
 					printf(BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(buff[i]));
+					printf("-");
+				}
 
 				printf("\n");
 				if (((double) (clock() - start) * 1000.0 / CLOCKS_PER_SEC) > 1000/13) {
@@ -104,6 +106,9 @@ int main(int argc, char *argv[])
 			// write back to shm
 			if (DISABLE_SHM_WRITE_BACK == 0)
 	        for (s = shm; i < shm_read_count; s++) {
+
+printf("shm will be written\n");
+
             	*s = buff[i];
             	i++;
 	        }
@@ -116,8 +121,10 @@ int main(int argc, char *argv[])
             if (SHOW_UPDATES == 1) {
                 f_c++;
                 printf("Rx (%4d Hz): ", f_c2);
-                for (i = 0; i < PORT_COUNT/8; i++)
+                for (i = 0; i < PORT_COUNT/8; i++) {
                     printf(BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(buff[i]));
+					printf("-");
+				}
 
                 printf("\n");
                 if (((double) (clock() - start) * 1000.0 / CLOCKS_PER_SEC) > 1000/13) {

@@ -84,7 +84,6 @@ void print_current_settings()
         syslog(LOG_INFO, "SPI Speed       : %d Hz\n", SPI_SPEED);
         syslog(LOG_INFO, "Loop Delay (uS) : %d uS\n", LOOP_DELAY_US);
         syslog(LOG_INFO, "Port Count      : %d \n", PORT_COUNT);
-        syslog(LOG_INFO, "Board Count     : %d\n", PORT_COUNT/96);
         syslog(LOG_INFO, "SHM Segment Key : %d\n", SHM_SEGMENT_KEY);
         syslog(LOG_INFO, "SHM Size        : %d bytes/%d ports\n", SHMSZ, SHMSZ*8);
 		if (DISABLE_SHM_WRITE_BACK == 1)
@@ -106,7 +105,6 @@ void print_current_settings()
         printf("SPI Speed       : %d Hz\n", SPI_SPEED);
         printf("Loop Delay (uS) : %d uS\n", LOOP_DELAY_US);
         printf("Port Count      : %d \n", PORT_COUNT);
-        printf("Board Count     : %d\n", PORT_COUNT/96);
         printf("SHM Segment Key : %d\n", SHM_SEGMENT_KEY);
         printf("SHM Size        : %d bytes/%d ports\n", SHMSZ, SHMSZ*8);
         if (DISABLE_SHM_WRITE_BACK == 1)
@@ -136,7 +134,7 @@ void print_usage()
 
 	printf("\t -s, --speed <value>\n");
 	printf("\t\t SPI communication speed as Hertz (Hz).\n");
-	printf("\t\t Available rates are (as MHz): 0.5,1,2,4,8,16,32.\n");
+	printf("\t\t Rates are 7629Hz to 125MHz.\n");
 
 	printf("\t\t Default value is: %d Hz\n", SPI_SPEED);
 	printf("\t\t \n");
@@ -152,7 +150,8 @@ void print_usage()
     printf("\t\t \n");
 
 	printf("\t -p, --port-count <value>\n");
-	printf("\t\t Port count to drive. Port count must be a multiple of 96.\n");
+	printf("\t\t Port count is length of data to be written to SPI port in bits.\n");
+	printf("\t\t Port count must be a multiple of 8.\n");
 	printf("\t\t Default value is: %d \n", PORT_COUNT);
 	printf("\t\t \n");
 
@@ -165,7 +164,7 @@ void print_usage()
     printf("\t -k, --shm-segment-key <value>\n");
     printf("\t\t Key value of shm memory to monitor.\n");
     printf("\t\t Key value must be decimal. \n");
-	printf("\t\t The data read back to the spi buffer is also written back to the SHM memory.");
+	printf("\t\t The data read back to the spi buffer is also written back to the SHM memory.\n");
     printf("\t\t Default value is: %d \n", SHM_SEGMENT_KEY);
     printf("\t\t \n");
 
