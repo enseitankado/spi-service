@@ -104,14 +104,13 @@ int main(int argc, char *argv[])
 			wiringPiSPIDataRW(SPI_PORT, buff, shm_read_count);
 
 			// write back to shm
-			if (DISABLE_SHM_WRITE_BACK == 0)
-	        for (s = shm; i < shm_read_count; s++) {
-
-printf("shm will be written\n");
-
-            	*s = buff[i];
-            	i++;
-	        }
+			if (DISABLE_SHM_WRITE_BACK == 0) {
+				i = 0;
+		        for (s = shm; i < shm_read_count; s++) {
+	            	*s = buff[i];
+	            	i++;
+		        }
+			}
 
 			// Latch functionaliry doesnt used if STCP_PIN is 0
 			if (STCP_PIN != 0)
