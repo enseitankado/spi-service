@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
 			// Write to the SPI buff and read-back to the buff
 			wiringPiSPIDataRW(SPI_PORT, buff, shm_read_count);
 
-			// write back to shm
+			// Write back to shm
 			if (DISABLE_SHM_WRITE_BACK == 0) {
 				i = 0;
 		        for (s = shm; i < shm_read_count; s++) {
@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
 				latch(STCP_PIN, STCP_DELAY);
 
 			// show miso input/rx updates
-            if (SHOW_UPDATES == 1) {
+            if (SHOW_UPDATES == 1 && DISABLE_SHM_WRITE_BACK == 0) {
                 f_c++;
                 printf("Rx (%4d Hz): ", f_c2);
                 for (i = 0; i < PORT_COUNT/8; i++) {

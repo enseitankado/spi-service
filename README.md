@@ -73,6 +73,9 @@ SHM memory key (SHM_SEGMENT_ID) is 1000146 (0x000f42d2). You can read/write SHM 
 Maz SHM size is as default 1024 (You can drive 8194 port with it). 
 Otherwise you can change this from def.c and run install.sh
 
+Somethings about SPI writaback and --disable-write-back switch:
+Data that was in your buffer is overwritten by data returned from the SPI (MISO) bus.
+
 The driver supports the following speeds:
 ```
   cdiv    speed
@@ -94,8 +97,8 @@ The driver supports the following speeds:
 ```
 When asking for say 24 MHz, the actual speed will be 15.6 MHz.
 
-[ref: projects.drogon.net/understanding-spi-on-the-raspberry-pi)](http://projects.drogon.net/understanding-spi-on-the-raspberry-pi)
-[ref: www.raspberrypi.org/documentation/hardware/raspberrypi/spi/README.md](https://www.raspberrypi.org/documentation/hardware/raspberrypi/spi/README.md)
+- [ref: projects.drogon.net/understanding-spi-on-the-raspberry-pi)](http://projects.drogon.net/understanding-spi-on-the-raspberry-pi)
+- [ref: www.raspberrypi.org/documentation/hardware/raspberrypi/spi/README.md](https://www.raspberrypi.org/documentation/hardware/raspberrypi/spi/README.md)
 
 # Command Line
 

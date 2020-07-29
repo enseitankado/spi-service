@@ -172,7 +172,7 @@ void print_usage()
     printf("\t\t As a default the SPI readback data written back to the SHM.\n");
     printf("\t\t Use this key to disable write back if you want shm data to remain unchanged.\n");
 	printf("\t\t You can give a value other than 0 to enable this key.\n");
-	printf("\t\t Default value is: %d \n", SHM_SEGMENT_KEY); 
+	printf("\t\t Default value is: %d\n", DISABLE_SHM_WRITE_BACK);
     printf("\t\t \n");
 
 	exit(EXIT_SUCCESS);
