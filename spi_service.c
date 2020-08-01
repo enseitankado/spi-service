@@ -40,7 +40,8 @@ int main(int argc, char *argv[])
 	unsigned char ro_buff[SHMSZ]; 	// Readonly buffer. wiringPiSPIDataRW reads MISO into readonly (ro) bufferr.
 	char *shm, *s; 					// shm pointers
 	clock_t start, end;				// reporting of updates freq.
-	int i, f_c=0, f_c2=0, data_changed, shm_read_count = PORT_COUNT / 8;
+	int i, f_c=0, f_c2=0, data_changed;
+	int shm_read_count = PORT_COUNT / 8;
 
 	// Can read SHM segment
 	if ((shm = shmat(shmid, NULL, 0)) == (char *) -1) {
@@ -80,7 +81,9 @@ int main(int argc, char *argv[])
 			i++;
 		}
 
-		// if changed then write to the SPI
+		// -------------------------------------
+		// if data changed then write to the SPI
+		// -------------------------------------
 		if ( 1 == data_changed)
 		{
 			// show Tx updates
@@ -101,7 +104,13 @@ int main(int argc, char *argv[])
 			}
 
 			// Write to the SPI buff and read-back to the buff
-			wiringPiSPIDataRW(SPI_PORT, buff, shm_read_count);
+			wiringPiSPIDataRW(SPI_PORT, buff, shm_read_count + 1);
+
+
+			// last bit used to temporarily disable the latch function
+			if (buff[shm_read_count] & 1 == 1)
+				printf("\nLastbit detected as 1\n");
+
 
 			// Write back to shm
 			if (DISABLE_SHM_WRITE_BACK == 0) {
