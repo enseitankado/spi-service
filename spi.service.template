@@ -8,7 +8,7 @@ SyslogIdentifier = spi-service
 StandardOutput = syslog+console
 StandardError = syslog+console
 EnvironmentFile = /etc/spi.service.conf
-ExecStart = /usr/sbin/spiservice --port-count=${PORT_COUNT} --latch-pin=${LATCH_PIN} --latch-delay=${LATCH_DELAY} --speed=${SPEED} --loop-delay-us=${LOOP_DELAY_US} --shm-segment-key=${SHM_SEGMENT_KEY} --disable-shm-writeback=${DISABLE_SHM_WRITE_BACK}
+ExecStart = /usr/sbin/spiservice --port-count=${PORT_COUNT} --latch-pin=${LATCH_PIN} --latch-delay=${LATCH_DELAY} --speed=${SPEED} --loop-delay-us=${LOOP_DELAY_US} --shm-data-segment-key=${SHM_DATA_SEGMENT_KEY} --shm-control-segment-key=${SHM_CONTROL_SEGMENT_KEY} --disable-shm-writeback=${DISABLE_SHM_WRITE_BACK}
 Type=idle
 
 [Install]

@@ -32,26 +32,53 @@ int main(int argc, char *argv[])
 	// Load WiringPi
 	init_wiring_pi();
 
-	// Create shared memory segment (SHM)
-	int shmid = create_shm_segment(SHM_SEGMENT_KEY, SHMSZ);
-
+	unsigned char LATCH_ENABLE;
 	unsigned char buff[SHMSZ];
+	unsigned char buffc[SHMCSZ];
 	unsigned char buff_old[SHMSZ];
 	unsigned char ro_buff[SHMSZ]; 	// Readonly buffer. wiringPiSPIDataRW reads MISO into readonly (ro) bufferr.
-	char *shm, *s; 					// shm pointers
+	char *shm, *s, *shmc, *sc;		// shm pointers
 	clock_t start, end;				// reporting of updates freq.
 	int i, f_c=0, f_c2=0, data_changed;
 	int shm_read_count = PORT_COUNT / 8;
 
-	// Can read SHM segment
+	// Create data SHM (Shared Memory Segmeng)
+	int shmid = create_shm_segment(SHM_DATA_SEGMENT_KEY, SHMSZ);
+
+	// Can read data SHM segment
 	if ((shm = shmat(shmid, NULL, 0)) == (char *) -1) {
-			if (SERVICE_MODE)
-				syslog(LOG_ERR, "SHM Memory cannot read. Exiting(-2)...");
-			else
-				printf("SHM Memory cannot read. Exiting(-2)...");
-	        perror("shmat");
-        	exit(-2);
-    	}
+		if (SERVICE_MODE)
+			syslog(LOG_ERR, "SHM Data segment cannot be read. Exiting(-2)...");
+		else
+			printf("SHM Data segment cannot read. Exiting(-2)...");
+        perror("shmat");
+       	exit(-2);
+   	}
+
+
+    // Create control SHM (Shared Memory Segmeng)
+    int shmcid = create_shm_segment(SHM_CONTROL_SEGMENT_KEY, SHMCSZ);
+
+    // Can read control SHM segment
+    if ((shmc = shmat(shmcid, NULL, 0)) == (char *) -1) {
+        if (SERVICE_MODE)
+            syslog(LOG_ERR, "SHM control segment cannot be read. Exiting(-2)...");
+        else
+            printf("SHM control segment cannot read. Exiting(-2)...");
+        perror("shmat");
+        exit(-2);
+    } else {
+		// Set dafault control values
+		sc = shmc;
+		// latch enabled/disabled
+		*sc = STCP_PIN & 1; sc++;
+		// latch delay
+		*sc = STCP_DELAY; sc++;
+		// loop delay
+		*sc = LOOP_DELAY_US; sc++;
+		// disable shm writeback
+		*sc = DISABLE_SHM_WRITE_BACK;
+	}
 
 	// if show-updates-enabled print settings header
 	print_current_settings();
@@ -59,7 +86,7 @@ int main(int argc, char *argv[])
 	// Showing SHM updates in --console-mode
 	if (SHOW_UPDATES == 1) {
 		start = clock();
-		printf("SHM (SHM_SEGMENT_KEY=%d) updates monitoring.\n", SHM_SEGMENT_KEY);
+		printf("SHM (SHM_DATA_SEGMENT_KEY=%d) updates monitoring.\n", SHM_DATA_SEGMENT_KEY);
 	}
 
 	// Infinitive loop
@@ -102,15 +129,15 @@ int main(int argc, char *argv[])
 					f_c = 0;
 				}
 			}
+			// Read control SHM
+			sc = shmc;
+			LATCH_ENABLE = *sc; sc++;
+			STCP_DELAY = *sc; sc++;
+			LOOP_DELAY_US = *sc; sc++;
+			DISABLE_SHM_WRITE_BACK = *sc;
 
 			// Write to the SPI buff and read-back to the buff
-			wiringPiSPIDataRW(SPI_PORT, buff, shm_read_count + 1);
-
-
-			// last bit used to temporarily disable the latch function
-			if (buff[shm_read_count] & 1 == 1)
-				printf("\nLastbit detected as 1\n");
-
+			wiringPiSPIDataRW(SPI_PORT, buff, shm_read_count);
 
 			// Write back to shm
 			if (DISABLE_SHM_WRITE_BACK == 0) {

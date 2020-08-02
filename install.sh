@@ -65,7 +65,9 @@ fi
 
 # Keep or overwrite conf file
 if [ -f /etc/spi.service.conf ]; then
-    printf "> Service configuration file detected at: /etc/spi.service.conf \n"
+    printf "> Service configuration file detected at: /etc/spi.service.conf \n\n"
+	cat /etc/spi.service.conf
+	printf "\n"
     read -p "  Do you want to keep current configuration file? [Y/n]: " -n 1 -r
     if [[  $REPLY =~ ^[Nn]$ ]]
     then

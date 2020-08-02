@@ -23,13 +23,13 @@ static int PORT_COUNT = 96;
 	4.5		30		91		-		MHz
 	6.0		35		108		-		MHz
 	Propagation delay Max. 220nS
-	
+
 	At VDD=15V, ID=4.4A, VGS=10V and RG=6Ω PJA3406's switching limit: 10,75MHz
 		Turn-On Delay Time	3ns
 		Turn-On Rise Time	39ns
 		Turn-Off Delay Time	23ns
-		Turn-Off Fall Time	28ns	
-	
+		Turn-Off Fall Time	28ns
+
 	=========================================================================
 	RPi Max. SPI Speed 32MHZ
 	Transmitted decimals: 1 2 4 8 16 32 64 128
@@ -77,36 +77,42 @@ static int PORT_COUNT = 96;
 static int SPI_PORT = 0;
 static int SPI_SPEED = 8 * 1000 * 1000;
 
-// SHM segment için ayrılacak bellek miktarı (byte)
-// Bu alan SHM_SEGMENT_ID ile iliskilendirilir ve 
-// her seferinde sadece shm_read_count kadar uzunlukta bilgi okunur.
-// WiringPi SPI tek sefer 4K lık bloklar okuyabiliyor.
-// Gordon amca daha uzunsa 4K lık parçalara böl demiş.
 /*
-	$ ipcs -lm
-	------ Shared Memory Limits --------
-	max number of segments = 4096
-	max seg size (kbytes) = 4177919
-	max total shared memory (kbytes) = 17112760316
-	min seg size (bytes) = 1
+ The amount of memory (bytes) to be allocated for the SHM segment where SPI data will be read / written.
+ Notes:
+ - WiringPi SPI function can read or write 4K blocks at once. For more, the data can be split into 4K chunks.
+ - SHM must be destroyed manually. Even if the process is closed, it remains in memory until restart.
 */
-
-// SHM must be destroyed manually. Even if the process is closed, it remains in memory until restart.
-// The amount of memory to be allocated for the SHM segment (bytes)
-// *Maximum value 4KiBiByte
-static int SHMSZ = 1024;
+static int SHMSZ = 4096;
 
 /*
-SHM segment KEY
-
-Some SHM inspecting tricks:
-- To list SHM limits: ipcs -l
-- To list SHM segments: ipcs -m
-- Detailed list of segments: ipcs -apct
-- Remove shared memory segment by key: sudo ipcrm -M <KEY>
-- Remove all SHM segments (Warning): sudo ipcrm --all=shm
+ Some SHM inspecting tricks:
+ - To list SHM limits: ipcs -l
+ - To list SHM segments: ipcs -m
+ - Detailed list of segments: ipcs -apct
+ - Remove shared memory segment by key: sudo ipcrm -M <KEY>
+ - Remove all SHM segments (Warning): sudo ipcrm --all=shm
 */
-key_t SHM_SEGMENT_KEY = 1000146; //0x000f42d2 (Mustafa Kemal Ataturk's National ID Number)
+key_t SHM_DATA_SEGMENT_KEY = 1000146; //0x000f42d2 (Mustafa Kemal Ataturk's National ID Number)
+
+/*
+ SHMCSZ: Control channel size over shared memory.
+*/
+static int SHMCSZ = 4;
+
+/*
+ Control channel over SHM to:
+ - Temporaly disable the latch function.
+    control_buff[0] = 1/0 (default 0 = latch enabled)
+ - Modify latch delay as us.
+    control_buff[1] = any (default --latch-delay)
+ - Modify loop delay as us.
+    control_buff[2] = any (default --loop-delay-us)
+ - Temporarly disable/enable disable_shm_write_back function.
+    control_buff[3] = 1/0 (default --disable-shm-writeback)
+*/
+key_t SHM_CONTROL_SEGMENT_KEY = 1000147; //0x000f42d3
+
 
 // Disable write back of SPI readback data to SHM
 static int DISABLE_SHM_WRITE_BACK = 0;

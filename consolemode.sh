@@ -10,7 +10,7 @@ if [ -f /usr/sbin/spiservice ]; then
 	printf "> The binarry running in debug mode.\n\n"
 	/usr/sbin/spiservice --console-mode --show-updates --latch-pin=22 --disable-shm-writeback=1 --port-count=$PORT_COUNT
 
-	printf "> Service is starting...\n"
+	printf "\n\n> Service is starting again...\n\n"
     sudo systemctl start spi.service
 else
 	printf "> Soryy, binary not exists at /usr/sbin/spiservice"
